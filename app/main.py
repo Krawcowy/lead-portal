@@ -218,7 +218,7 @@ def run_scan():
 @app.post("/scan")
 def scan_sources():
     run_scan()
-    return RedirectResponse("/", status_code=303)(db: Session = Depends(get_db)):
+    return RedirectResponse("/", status_code=303):
     sources = db.query(Source).filter(Source.active == True).all()
 
     for source in sources:
