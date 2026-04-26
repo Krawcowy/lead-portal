@@ -219,38 +219,7 @@ def run_scan():
 def scan_sources():
     run_scan()
     return RedirectResponse("/", status_code=303)
-    sources = db.query(Source).filter(Source.active == True).all()
-
-    for source in sources:
-        try:
-            found_leads = extract_leads_from_source(source.url)
-
-            for item in found_leads:
-                exists = db.query(Lead).filter(Lead.url == item["url"]).first()
-
-                if not exists:
-                    lead = Lead(
-    title=item["title"],
-    url=item["url"],
-    source_id=source.id,
-    notes=item.get("description"),
-    price=item.get("price"),
-    deadline=item.get("deadline"),
-    asset_type=item.get("asset_type"),
-    category=item.get("category") or "inne"
-)
-                    db.add(lead)
-
-        except Exception as e:
-            print(f"Błąd przy źródle {source.url}: {e}")
-
-    db.commit()
-
-    return RedirectResponse("/", status_code=303)
-
-
-    scheduler = BackgroundScheduler()
-
+  
 def scheduled_scan_job():
     db = SessionLocal()
 
