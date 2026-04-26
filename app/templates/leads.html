@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Leady</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8;display:flex}
+.sidebar{width:300px;background:#111827;color:white;min-height:100vh;padding:20px;box-sizing:border-box;position:fixed}
+.sidebar a{display:block;color:#e5e7eb;text-decoration:none;padding:9px 10px;border-radius:6px;margin-bottom:5px}
+.sidebar a:hover,.sidebar a.active{background:#2563eb;color:white}
+.menu-header{cursor:pointer;padding:11px 10px;background:#1f2937;border-radius:8px;margin-top:14px;font-weight:bold}
+.menu-content{display:none;margin-top:8px;padding-left:8px}
+.menu-content.open{display:block}
+.count{float:right;color:#9ca3af}
+.content{margin-left:330px;padding:30px;width:calc(100% - 330px)}
+.toolbar{background:white;padding:15px;border-radius:12px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.lead{background:white;border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.badge{display:inline-block;background:#e5e7eb;padding:5px 8px;border-radius:6px;font-size:13px;margin-right:5px}
+.price{font-weight:bold;color:#047857}
+.notes{background:#f9fafb;padding:10px;border-radius:8px;max-height:180px;overflow:auto;line-height:1.45}
+select{padding:9px;border-radius:8px;border:1px solid #d1d5db}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+<h2>Leady</h2>
+
+<a href="/">Dashboard</a>
+<a href="/leads" class="{% if not selected_asset_type and not selected_category and not selected_source_id %}active{% endif %}">
+Wszystkie
+</a>
+
+<div class="menu-header" onclick="toggleMenu('sources')">▸ Źródła</div>
+<div id="sources" class="menu-content">
+<a href="/leads?sort={{ selected_sort }}">Wszystkie źródła</a>
+
+{% for s in sources %}
+<a href="/leads?source_id={{ s.id }}&asset_type={{ selected_asset_type or '' }}&category={{ selected_category or '' }}&sort={{ selected_sort }}"
+   class="{% if selected_source_id == s.id %}active{% endif %}">
+{{ s.name }} <span class="count">{{ source_counts.get(s.id, 0) }}</span>
+</a>
+{% endfor %}
+</div>
+
+<div class="menu-header" onclick="toggleMenu('nieruchomosci')">▸ Nieruchomości</div>
+<div id="nieruchomosci" class="menu-content">
+<a href="/leads?source_id={{ selected_source_id or '' }}&asset_type=nieruchomości&sort={{ selected_sort }}">
+Wszystkie <span class="count">{{ asset_counts.get("nieruchomości", 0) }}</span>
+</a>
+<a href="/leads?source_id={{ selected_source_id or '' }}&asset_type=nieruchomości&category=mieszkania&sort={{ selected_sort }}">
+Mieszkania <span class="count">{{ category_counts.get("mieszkania", 0) }}</span>
+</a>
+<a href="/leads?source_id={{ selected_source_id or '' }}&asset_type=nieruchomości&category=domy&sort={{ selected_sort }}">
+Domy <span class="count">{{ category_counts.get("domy", 0) }}</span>
+</a>
+<a href="/leads?source_id={{ selected_source_id or '' }}&asset_type=nieruchomości&category=lokale użytkowe&sort={{ selected_sort }}">
+Lokale użytkowe <span class="count">{{ category_counts.get("lokale użytkowe", 0) }}</span>
+</a>
+<a href="/leads?source_id={{ selected_source_id or '' }}&asset_type=nieruchomości&category=działki / grunty&sort={{ selected_sort }}">
+Działki / grunty <span class="count">{{ category_counts.get("działki / grunty", 0) }}</span>
+</a>
+<a href="/leads?source_id={{ selected_source_id or '' }}&asset_type=nieruchomości&category=garaże / miejsca postojowe&sort={{ selected_sort }}">
+Garaże / miejsca postojowe <span class="count">{{ category_counts.get("garaże / miejsca postojowe", 0) }}</span>
+</a>
+</div>
+
+<div class="menu-header" onclick="toggleMenu('ruchomosci')">▸ Ruchomości</div>
+<div id="ruchomosci" class="menu-content">
+<a href="/leads?source_id={{ selected_source_id or '' }}&asset_type=ruchomości&sort={{ selected_sort }}">
+Wszystkie <span class="count">{{ asset_counts.get("ruchomości", 0) }}</span>
+</a>
+<a href="/leads?source_id={{ selected_source_id or '' }}&asset_type=ruchomości&category=samochody / pojazdy&sort={{ selected_sort }}">
+Samochody / pojazdy <span class="count">{{ category_counts.get("samochody / pojazdy", 0) }}</span>
+</a>
+<a href="/leads?source_id={{ selected_source_id or '' }}&asset_type=ruchomości&category=maszyny / sprzęt&sort={{ selected_sort }}">
+Maszyny / sprzęt <span class="count">{{ category_counts.get("maszyny / sprzęt", 0) }}</span>
+</a>
+<a href="/leads?source_id={{ selected_source_id or '' }}&asset_type=ruchomości&category=wyposażenie / meble&sort={{ selected_sort }}">
+Wyposażenie / meble <span class="count">{{ category_counts.get("wyposażenie / meble", 0) }}</span>
+</a>
+<a href="/leads?source_id={{ selected_source_id or '' }}&asset_type=ruchomości&category=towary / zapasy&sort={{ selected_sort }}">
+Towary / zapasy <span class="count">{{ category_counts.get("towary / zapasy", 0) }}</span>
+</a>
+</div>
+
+<div class="menu-header" onclick="toggleMenu('inne')">▸ Inne</div>
+<div id="inne" class="menu-content">
+<a href="/leads?source_id={{ selected_source_id or '' }}&asset_type=inne&sort={{ selected_sort }}">
+Wszystkie inne <span class="count">{{ asset_counts.get("inne", 0) }}</span>
+</a>
+<a href="/leads?source_id={{ selected_source_id or '' }}&category=udziały / prawa&sort={{ selected_sort }}">
+Udziały / prawa <span class="count">{{ category_counts.get("udziały / prawa", 0) }}</span>
+</a>
+</div>
+</div>
+
+<div class="content">
+<h1>Leady</h1>
+
+<div class="toolbar">
+<form method="get" action="/leads">
+<input type="hidden" name="source_id" value="{{ selected_source_id or '' }}">
+<input type="hidden" name="asset_type" value="{{ selected_asset_type or '' }}">
+<input type="hidden" name="category" value="{{ selected_category or '' }}">
+
+<label>Sortowanie:</label>
+<select name="sort" onchange="this.form.submit()">
+<option value="newest" {% if selected_sort == "newest" %}selected{% endif %}>Najnowsze</option>
+<option value="oldest" {% if selected_sort == "oldest" %}selected{% endif %}>Najstarsze</option>
+<option value="price_low" {% if selected_sort == "price_low" %}selected{% endif %}>Cena rosnąco</option>
+<option value="price_high" {% if selected_sort == "price_high" %}selected{% endif %}>Cena malejąco</option>
+</select>
+</form>
+
+<p>Znaleziono: <strong>{{ leads|length }}</strong></p>
+</div>
+
+{% for l in leads %}
+<div class="lead">
+<h3>{{ l.title }}</h3>
+
+<p>
+<span class="badge">{{ l.asset_type or "brak typu" }}</span>
+<span class="badge">{{ l.category or "inne" }}</span>
+<span class="badge">Status: {{ l.status }}</span>
+</p>
+
+{% if l.price %}
+<p class="price">Cena: {{ l.price }}</p>
+{% endif %}
+
+{% if l.deadline %}
+<p><strong>Termin:</strong> {{ l.deadline }}</p>
+{% endif %}
+
+{% if l.source %}
+<p><strong>Źródło:</strong> {{ l.source.name }}</p>
+{% endif %}
+
+{% if l.notes %}
+<div class="notes">{{ l.notes }}</div>
+{% endif %}
+
+<p><a href="{{ l.url }}" target="_blank">Otwórz źródło</a></p>
+</div>
+{% endfor %}
+</div>
+
+<script>
+function toggleMenu(id){
+const el=document.getElementById(id);
+el.classList.toggle("open");
+localStorage.setItem(id, el.classList.contains("open") ? "1" : "0");
+}
+
+document.addEventListener("DOMContentLoaded",function(){
+["sources","nieruchomosci","ruchomosci","inne"].forEach(function(id){
+const el=document.getElementById(id);
+if(localStorage.getItem(id)==="1"){el.classList.add("open");}
+});
+});
+</script>
+
+</body>
+</html>

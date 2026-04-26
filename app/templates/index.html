@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Lead Portal</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #111827;
+        }
+
+        .topbar {
+            background: #111827;
+            color: white;
+            padding: 22px 35px;
+        }
+
+        .topbar h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .topbar p {
+            margin: 6px 0 0;
+            color: #d1d5db;
+        }
+
+        .container {
+            padding: 35px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            margin: 0;
+            font-size: 34px;
+        }
+
+        .card p {
+            margin: 8px 0 0;
+            color: #6b7280;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .action {
+            background: white;
+            padding: 24px;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .action h3 {
+            margin-top: 0;
+        }
+
+        .btn, button {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 11px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .btn.secondary {
+            background: #374151;
+        }
+
+        .btn.green {
+            background: #059669;
+        }
+
+        button:hover, .btn:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 900px) {
+            .cards, .actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <h1>Lead Portal</h1>
+    <p>Panel do zbierania i analizy ogłoszeń syndyków oraz przetargów</p>
+</div>
+
+<div class="container">
+
+    <div class="cards">
+        <div class="card">
+            <h2>{{ sources_count }}</h2>
+            <p>Źródła monitorowane</p>
+        </div>
+
+        <div class="card">
+            <h2>{{ leads_count }}</h2>
+            <p>Wszystkie leady</p>
+        </div>
+
+        <div class="card">
+            <h2>{{ new_leads_count }}</h2>
+            <p>Nowe leady</p>
+        </div>
+    </div>
+
+    <div class="actions">
+        <div class="action">
+            <h3>Źródła</h3>
+            <p>Dodawaj strony, z których system ma tworzyć leady.</p>
+            <a class="btn secondary" href="/sources">Zarządzaj źródłami</a>
+        </div>
+
+        <div class="action">
+            <h3>Leady</h3>
+            <p>Przeglądaj, filtruj i oceniaj znalezione okazje.</p>
+            <a class="btn" href="/leads">Przejdź do leadów</a>
+        </div>
+
+        <div class="action">
+            <h3>Skanowanie</h3>
+            <p>Uruchom pobieranie nowych leadów ze wszystkich źródeł.</p>
+            <form action="/scan" method="post">
+                <button type="submit">Skanuj źródła</button>
+            </form>
+        </div>
+    </div>
+<a class="btn secondary" href="/scan-settings">Autoskanowanie</a>
+</div>
+
+</body>
+</html>

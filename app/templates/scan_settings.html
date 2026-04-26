@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Autoskanowanie</title>
+</head>
+<body>
+    <h1>Autoskanowanie</h1>
+
+    <p><a href="/">Dashboard</a></p>
+
+    <form action="/scan-settings" method="post">
+        <p>
+            <label>
+                <input type="checkbox" name="enabled" {% if settings.enabled %}checked{% endif %}>
+                Włącz autoskanowanie
+            </label>
+        </p>
+
+        <p>
+            Co ile godzin:<br>
+            <input type="number" name="interval_hours" value="{{ settings.interval_hours }}" min="1" max="168">
+        </p>
+
+        <button type="submit">Zapisz ustawienia</button>
+    </form>
+
+    <p>
+        Ostatnie skanowanie:
+        {{ settings.last_run_at or "brak" }}
+    </p>
+</body>
+</html>
